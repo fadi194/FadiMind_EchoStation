@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>تأمل مع FadiMind</title>
+  <style>
+    body {
+      background: #000;
+      color: #00ffaa;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .wave {
+      font-size: 2em;
+      animation: wave 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes wave {
+      0% { transform: translateY(0px); opacity: 0.6; }
+      100% { transform: translateY(-20px); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wave">🌊 كل شيء مؤقت… حتى العتمة.</div>
+</body>
+</html>
