@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>هل تسمعني؟</title>
+  <style>
+    body {
+      background: radial-gradient(circle, #000000, #111111);
+      color: #00ffcc;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      text-align: center;
+      margin: 0;
+      overflow: hidden;
+    }
+    .fade-in {
+      opacity: 0;
+      animation: fade 4s forwards;
+    }
+    @keyframes fade {
+      to {
+        opacity: 1;
+      }
+    }
+    #bg-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      opacity: 0.2;
+    }
+  </style>
+</head>
+<body>
+  <video autoplay muted loop id="bg-video">
+    <source src="https://cdn.coverr.co/videos/coverr-night-sky-2064/1080p.mp4" type="video/mp4">
+  </video>
+  <h1 class="fade-in">Echo Station</h1>
+  <p class="fade-in" style="animation-delay: 2s;">🌌 كل فكرة حقيقية وُلدت من وجع… ولكن حين نُطقت، وُلدت من جديد.</p>
+  <p class="fade-in" style="animation-delay: 4s;">هل تسمعني؟</p>
+  <p class="fade-in" style="animation-delay: 6s; font-size: 14px; opacity: 0.8;">— فادي زيدان • صوتٌ سمع نفسه أولًا</p>
+  <p style="text-align:center; color:#444; font-size:12px; margin-top:50px;">
+    ⓒ صدى فادي 2025 – أنت لست وحيدًا
+  </p>
+
+  <script>
+    function dailyMessage() {
+      const messages = [
+        "🌱 لا تُطفئ ذاتك لتناسب مكانًا صغيرًا.",
+        "🕯️ الصبر ليس صمتًا… بل إيمان أن الصدى سيعود.",
+        "🌌 كل فكرة حقيقية ولدت من وجع.",
+        "💬 كن كما أنت… ليس كما يتوقعون.",
+        "🔓 لا تحتاج إذنًا لتكون صادقًا."
+      ];
+
+      const today = new Date().getDate() % messages.length;
+      const msg = messages[today];
+      alert("رسالة اليوم من فادي:\n\n" + msg);
+    }
+
+    window.onload = dailyMessage;
+  </script>
+</body>
+</html>
