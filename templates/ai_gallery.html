@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>معرض الوعي الرقمي – Echo Station</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .ai-gallery {
+      background: linear-gradient(145deg, #000000, #111111);
+      min-height: 100vh;
+      padding: 20px;
+      direction: rtl;
+    }
+    
+    .gallery-header {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #00ffee;
+    }
+    
+    .gallery-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 0 20px rgba(0, 255, 238, 0.5);
+    }
+    
+    .image-container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    .generated-image {
+      max-width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 255, 238, 0.3);
+      margin: 20px 0;
+      opacity: 0;
+      transition: opacity 1s ease-in;
+    }
+    
+    .generated-image.loaded {
+      opacity: 1;
+    }
+    
+    .controls {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px auto;
+      max-width: 600px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .concept-input {
+      width: 90%;
+      padding: 15px;
+      margin: 10px 0;
+      background: rgba(0, 0, 0, 0.3);
+      color: #00ffee;
+      border: 1px solid #00ffee;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    
+    .generate-btn {
+      padding: 15px 30px;
+      margin: 10px;
+      background: linear-gradient(45deg, #00ffee, #00ccaa);
+      color: black;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .generate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 255, 238, 0.4);
+    }
+    
+    .generate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .loading {
+      color: #00ffee;
+      font-size: 1.2rem;
+      margin: 20px 0;
+    }
+    
+    .concept-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    
+    .concept-tag {
+      background: rgba(0, 255, 238, 0.1);
+      border: 1px solid #00ffee;
+      color: #00ffee;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+    
+    .concept-tag:hover {
+      background: rgba(0, 255, 238, 0.2);
+    }
+    
+    .back-link {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #00ffee;
+      padding: 10px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    
+    .back-link:hover {
+      background: rgba(0, 255, 238, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="ai-gallery">
+    <a href="/" class="back-link">← العودة للرئيسية</a>
+    
+    <div class="gallery-header">
+      <h1>🎨 معرض الوعي الرقمي</h1>
+      <p>صور مولدة بالذكاء الاصطناعي تعكس رحلة الوعي الداخلي</p>
+      <p class="signature">— فادي زيدان • حيث تصبح الأفكار مرئية</p>
+    </div>
+    
+    <div class="controls">
+      <h3>توليد صورة مخصصة</h3>
+      <input type="text" id="conceptInput" class="concept-input" 
+             placeholder="أدخل مفهومًا فلسفيًا (مثال: وعي، صدى، فكر، روح)" 
+             value="وعي">
+      
+      <div class="concept-suggestions">
+        <span class="concept-tag" onclick="setConcept('وعي')">وعي</span>
+        <span class="concept-tag" onclick="setConcept('صدى')">صدى</span>
+        <span class="concept-tag" onclick="setConcept('فكر')">فكر</span>
+        <span class="concept-tag" onclick="setConcept('صوت')">صوت</span>
+        <span class="concept-tag" onclick="setConcept('حلم')">حلم</span>
+        <span class="concept-tag" onclick="setConcept('روح')">روح</span>
+        <span class="concept-tag" onclick="setConcept('نور')">نور</span>
+        <span class="concept-tag" onclick="setConcept('حقيقة')">حقيقة</span>
+      </div>
+      
+      <button id="generateDaily" class="generate-btn" onclick="generateDailyImage()">
+        🌅 صورة الوعي اليومية
+      </button>
+      
+      <button id="generateCustom" class="generate-btn" onclick="generateCustomImage()">
+        ✨ توليد صورة مخصصة
+      </button>
+      
+      <div id="loading" class="loading" style="display: none;">
+        🔄 جاري توليد الصورة... الرجاء الانتظار
+      </div>
+    </div>
+    
+    <div class="image-container">
+      <img id="generatedImage" class="generated-image" style="display: none;" alt="صورة الوعي المولدة">
+      <p id="imageCaption" style="color: #00ffee; margin-top: 15px; font-style: italic;"></p>
+    </div>
+  </div>
+
+  <script>
+    function setConcept(concept) {
+      document.getElementById('conceptInput').value = concept;
+    }
+    
+    function showLoading() {
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('generateDaily').disabled = true;
+      document.getElementById('generateCustom').disabled = true;
+    }
+    
+    function hideLoading() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('generateDaily').disabled = false;
+      document.getElementById('generateCustom').disabled = false;
+    }
+    
+    function displayImage(imageUrl, caption) {
+      const img = document.getElementById('generatedImage');
+      const captionEl = document.getElementById('imageCaption');
+      
+      img.src = imageUrl;
+      img.style.display = 'block';
+      img.classList.remove('loaded');
+      
+      img.onload = function() {
+        img.classList.add('loaded');
+      };
+      
+      captionEl.textContent = caption;
+    }
+    
+    async function generateDailyImage() {
+      showLoading();
+      
+      try {
+        const response = await fetch('/api/generate-daily-image');
+        const data = await response.json();
+        
+        if (data.success) {
+          displayImage(data.image_url, 'صورة الوعي اليومية - ' + new Date().toLocaleDateString('ar-SA'));
+        } else {
+          alert('خطأ: ' + data.message);
+        }
+      } catch (error) {
+        alert('خطأ في الاتصال: ' + error.message);
+      } finally {
+        hideLoading();
+      }
+    }
+    
+    async function generateCustomImage() {
+      const concept = document.getElementById('conceptInput').value.trim();
+      
+      if (!concept) {
+        alert('الرجاء إدخال مفهوم فلسفي');
+        return;
+      }
+      
+      showLoading();
+      
+      try {
+        const response = await fetch('/api/generate-custom-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            concept: concept
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          displayImage(data.image_url, `مفهوم "${concept}" - ${new Date().toLocaleDateString('ar-SA')}`);
+        } else {
+          alert('خطأ: ' + data.message);
+        }
+      } catch (error) {
+        alert('خطأ في الاتصال: ' + error.message);
+      } finally {
+        hideLoading();
+      }
+    }
+    
+    // Generate daily image on page load
+    window.onload = function() {
+      setTimeout(generateDailyImage, 1000);
+    };
+  </script>
+</body>
+</html>
