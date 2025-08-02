@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>مثال التكامل السحابي - صدى فادي</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      background: linear-gradient(145deg, #000000, #111111);
+      color: #00ffee;
+      padding: 20px;
+      direction: rtl;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      background: #222;
+      color: #00ffee;
+      border: 1px solid #00ffee;
+      border-radius: 5px;
+      padding: 10px;
+      font-family: inherit;
+    }
+    button {
+      background: #00ffee;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #00ccaa;
+    }
+    .status {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .success { background: rgba(0, 255, 0, 0.1); border: 1px solid #00ff00; }
+    .error { background: rgba(255, 0, 0, 0.1); border: 1px solid #ff0000; }
+    .info { background: rgba(0, 255, 238, 0.1); border: 1px solid #00ffee; }
+    code {
+      background: #333;
+      padding: 2px 5px;
+      border-radius: 3px;
+      color: #ffff00;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔗 مثال التكامل السحابي</h1>
+    <p>هذا مثال مبسط لكيفية ربط محطة الصدى مع Google Apps Script</p>
+    
+    <h3>1. إعداد رابط Google Apps Script:</h3>
+    <input type="text" id="webAppUrl" placeholder="الصق رابط Web App هنا" style="width: 100%; padding: 10px; margin: 10px 0; background: #222; color: #00ffee; border: 1px solid #00ffee; border-radius: 5px;">
+    <button onclick="setWebAppUrl()">حفظ الرابط</button>
+    
+    <h3>2. اختبار الحفظ:</h3>
+    <textarea id="testText" placeholder="اكتب نصاً للاختبار..."></textarea>
+    <br>
+    <button onclick="testSave()">اختبار الحفظ السحابي</button>
+    <button onclick="testLocalSave()">اختبار الحفظ المحلي</button>
+    
+    <div id="status" class="status info">
+      اكتب نصاً واختبر الحفظ السحابي
+    </div>
+    
+    <h3>3. كود Google Apps Script المطلوب:</h3>
+    <pre style="background: #222; padding: 15px; border-radius: 5px; color: #00ffee; overflow-x: auto;">
+function doPost(e) {
+  try {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1");
+    const text = e.parameter.text;
+    const timestamp = new Date();
+    const arabicTimestamp = Utilities.formatDate(timestamp, "GMT+3", "yyyy-MM-dd HH:mm:ss");
+    
+    sheet.appendRow([arabicTimestamp, text]);
+    
+    return ContentService
+      .createTextOutput("تم الحفظ ✅")
+      .setMimeType(ContentService.MimeType.TEXT);
+      
+  } catch (error) {
+    return ContentService
+      .createTextOutput("خطأ في الحفظ ❌: " + error.toString())
+      .setMimeType(ContentService.MimeType.TEXT);
+  }
+}
+    </pre>
+    
+    <h3>4. خطوات النشر:</h3>
+    <ol style="text-align: right;">
+      <li>انسخ الكود أعلاه إلى Google Apps Script</li>
+      <li>انقر "نشر" → "نشر كتطبيق ويب"</li>
+      <li>اختر "تنفيذ باسم: أنا"</li>
+      <li>اختر "من لديه حق الوصول: أي شخص"</li>
+      <li>انسخ رابط Web App والصقه أعلاه</li>
+    </ol>
+  </div>
+
+  <script>
+    function setWebAppUrl() {
+      const url = document.getElementById("webAppUrl").value;
+      if (url) {
+        localStorage.setItem("demo_web_app_url", url);
+        showStatus("✅ تم حفظ رابط Web App", "success");
+      } else {
+        showStatus("❌ الرجاء إدخال رابط صحيح", "error");
+      }
+    }
+
+    function testSave() {
+      const text = document.getElementById("testText").value;
+      const url = localStorage.getItem("demo_web_app_url");
+      
+      if (!url) {
+        showStatus("❌ الرجاء إعداد رابط Web App أولاً", "error");
+        return;
+      }
+      
+      if (!text.trim()) {
+        showStatus("❌ الرجاء كتابة نص للاختبار", "error");
+        return;
+      }
+      
+      showStatus("🔄 جاري الحفظ السحابي...", "info");
+      
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ text })
+      })
+      .then(response => response.text())
+      .then(result => {
+        showStatus("✅ نجح الحفظ السحابي: " + result, "success");
+        // حفظ محلي أيضاً
+        localStorage.setItem("demo_saved_text", text);
+      })
+      .catch(error => {
+        showStatus("❌ فشل الحفظ السحابي: " + error.message, "error");
+      });
+    }
+
+    function testLocalSave() {
+      const text = document.getElementById("testText").value;
+      
+      if (!text.trim()) {
+        showStatus("❌ الرجاء كتابة نص للاختبار", "error");
+        return;
+      }
+      
+      localStorage.setItem("demo_saved_text", text);
+      showStatus("✅ تم الحفظ المحلي بنجاح", "success");
+    }
+
+    function showStatus(message, type) {
+      const statusDiv = document.getElementById("status");
+      statusDiv.textContent = message;
+      statusDiv.className = "status " + type;
+    }
+
+    // تحميل الرابط المحفوظ عند فتح الصفحة
+    window.onload = function() {
+      const savedUrl = localStorage.getItem("demo_web_app_url");
+      if (savedUrl) {
+        document.getElementById("webAppUrl").value = savedUrl;
+        showStatus("☁️ رابط Web App محفوظ ومجهز للاستخدام", "info");
+      }
+    };
+  </script>
+</body>
+</html>
