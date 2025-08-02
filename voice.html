@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>رسالة مسموعة من فادي</title>
+</head>
+<body style="text-align:center; background:#0a0a0a; color:#00ffee; padding-top:100px; font-family:'Courier New', monospace;">
+  <h1>🔊 اسمع صدى وعيك</h1>
+  <textarea id="text" rows="4" cols="50" placeholder="اكتب ما تريد سماعه..." style="padding:10px;"></textarea><br><br>
+  <button onclick="speak()">انطق الرسالة</button>
+
+  <script>
+    function speak() {
+      const input = document.getElementById("text").value;
+      const utterance = new SpeechSynthesisUtterance(input);
+      utterance.lang = 'ar-SA'; // صوت عربي سعودي (أوضح نطقًا)
+      window.speechSynthesis.speak(utterance);
+    }
+  </script>
+</body>
+</html>
