@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>FadiMind Visual Echo</title>
+  <style>
+    body {
+      background: #000;
+      color: white;
+      text-align: center;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌊 FadiMind Visual Echo</h1>
+  <p>صدى بصري يتحرك مع إيقاع الأفكار</p>
+  
+  <canvas id="canvas" width="600" height="200" style="background:#000; display:block; margin: auto; border: 1px solid #333;"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let x = 0;
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0,0,0,0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00ffcc';
+      ctx.beginPath();
+      ctx.arc(x, 100 + Math.sin(x/10)*50, 5, 0, Math.PI*2);
+      ctx.fill();
+      x = (x + 2) % canvas.width;
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
+</body>
+</html>
