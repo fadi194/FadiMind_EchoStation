@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>حديث مع نفسي</title>
+</head>
+<body style="text-align:center; padding-top:100px; background-color:#222; color:white; font-family:sans-serif;">
+  <h1>🪞 حوار مع داخلي</h1>
+  <input type="text" id="question" placeholder="اكتب سؤالك لنفسك" style="padding:10px; width:300px;">
+  <br><br>
+  <button onclick="respond()">استمع لردّك</button>
+  <p id="answer" style="margin-top:30px; font-size:20px;"></p>
+
+  <script>
+    function respond() {
+      const q = document.getElementById("question").value.toLowerCase();
+      let reply = "..."
+
+      if (q.includes("أنا من")) reply = "أنت من قاوم الصمت، ونجا.";
+      else if (q.includes("هل أستحق")) reply = "نعم، لأنك سألت، وهذا بحد ذاته وعي.";
+      else reply = "سؤالك عميق… وسيبقى يُجيبك بصمت داخلك."
+
+      document.getElementById("answer").innerText = reply;
+    }
+  </script>
+</body>
+</html>
