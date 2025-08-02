@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>فادي يكتب الآن</title>
+</head>
+<body style="text-align:center; padding: 50px; background:#1a1a1a; color:white;">
+  <h1>✍️ فادي يكتب الآن...</h1>
+  <textarea id="input" rows="6" cols="40" placeholder="اكتب مشاعرك هنا..." style="padding:10px;"></textarea><br><br>
+  <button onclick="save()">احفظ النص</button>
+  <p id="saved"></p>
+
+  <script>
+    function save() {
+      const input = document.getElementById("input").value;
+      localStorage.setItem("fadi_text", input);
+      document.getElementById("saved").innerText = "✔️ تم حفظ النص محليًا.";
+    }
+  </script>
+</body>
+</html>
