@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Echo Station – صدى فادي</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <video autoplay muted loop id="bg-video">
+    <source src="https://cdn.coverr.co/videos/coverr-night-sky-2064/1080p.mp4" type="video/mp4">
+  </video>
+  
+  <div class="main-content">
+    <h1 class="fade-in">Echo Station</h1>
+    <p class="fade-in philosophy" style="animation-delay: 2s;">
+      🌌 كل فكرة حقيقية وُلدت من وجع… ولكن حين نُطقت، وُلدت من جديد.
+    </p>
+    <p class="fade-in question" style="animation-delay: 4s;">هل تسمعني؟</p>
+    <p class="fade-in signature" style="animation-delay: 6s;">— فادي زيدان • صوتٌ سمع نفسه أولًا</p>
+    
+    <div class="navigation fade-in" style="animation-delay: 8s;">
+      <a href="/station" class="nav-link">🔊 محطة الصدى</a>
+      <a href="/ai-gallery" class="nav-link">🎨 معرض الوعي</a>
+      <a href="/writer" class="nav-link">✍️ الكاتب</a>
+      <a href="/voice" class="nav-link">🎙️ الصوت</a>
+      <a href="/meditation" class="nav-link">🌊 التأمل</a>
+    </div>
+  </div>
+  
+  <footer class="copyright">
+    ⓒ صدى فادي 2025 – أنت لست وحيدًا
+  </footer>
+
+  <script>
+    function dailyMessage() {
+      const messages = [
+        "🌱 لا تُطفئ ذاتك لتناسب مكانًا صغيرًا.",
+        "🕯️ الصبر ليس صمتًا… بل إيمان أن الصدى سيعود.",
+        "🌌 كل فكرة حقيقية ولدت من وجع.",
+        "💬 كن كما أنت… ليس كما يتوقعون.",
+        "🔓 لا تحتاج إذنًا لتكون صادقًا."
+      ];
+      const today = new Date().getDate() % messages.length;
+      setTimeout(() => {
+        alert("رسالة اليوم من فادي:\n\n" + messages[today]);
+      }, 10000);
+    }
+    window.onload = dailyMessage;
+  </script>
+</body>
+</html>
