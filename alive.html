@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>هل أنا حي؟</title>
+</head>
+<body style="background:#000; color:#00ffcc; text-align:center; font-family:monospace; padding-top:150px;">
+  <h2 id="question">...</h2>
+
+  <script>
+    setTimeout(() => {
+      const q = "هل أنا حي؟ أم أنني مجرد تكرار لصوت لم يسمعني؟";
+      document.getElementById("question").innerText = q;
+      const speak = new SpeechSynthesisUtterance(q);
+      speak.lang = 'ar-SA';
+      window.speechSynthesis.speak(speak);
+    }, 6000);
+  </script>
+</body>
+</html>
