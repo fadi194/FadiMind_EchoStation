@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>مثال عملي للربط السحابي - صدى فادي</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      background: linear-gradient(145deg, #000000, #111111);
+      color: #00ffee;
+      padding: 20px;
+      direction: rtl;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+    }
+    textarea, input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      background: #222;
+      color: #00ffee;
+      border: 1px solid #00ffee;
+      border-radius: 5px;
+      font-family: inherit;
+    }
+    button {
+      background: #00ffee;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #00ccaa;
+    }
+    .status {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+      background: rgba(0, 255, 238, 0.1);
+      border: 1px solid #00ffee;
+    }
+    .example-url {
+      background: #333;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      color: #ffff00;
+      word-break: break-all;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 مثال عملي للربط السحابي</h1>
+    <p>هذا المثال يوضح كيفية استخدام رابط Google Apps Script الحقيقي</p>
+    
+    <div class="example-url">
+      مثال لرابط Google Apps Script:<br>
+      https://script.google.com/macros/s/AKfycbxyz12345678/exec
+    </div>
+    
+    <h3>✍️ اكتب نصك هنا:</h3>
+    <textarea id="userText" rows="4" placeholder="اكتب مشاعرك أو أفكارك..."></textarea>
+    
+    <h3>🔗 رابط Google Apps Script:</h3>
+    <input type="text" id="scriptUrl" placeholder="الصق رابط Google Apps Script هنا">
+    <button onclick="setScriptUrl()">حفظ الرابط</button>
+    
+    <h3>💾 احفظ النص:</h3>
+    <button onclick="saveToCloud()">حفظ سحابي</button>
+    <button onclick="saveLocally()">حفظ محلي</button>
+    <button onclick="hybridSave()">حفظ مزدوج (محلي + سحابي)</button>
+    
+    <div id="status" class="status">
+      جاهز للحفظ - اكتب نصك واختر طريقة الحفظ
+    </div>
+    
+    <h3>📋 النصوص المحفوظة محلياً:</h3>
+    <button onclick="showSavedTexts()">عرض النصوص المحفوظة</button>
+    <div id="savedTexts" style="margin-top: 10px;"></div>
+  </div>
+
+  <script>
+    function setScriptUrl() {
+      const url = document.getElementById("scriptUrl").value;
+      if (url && url.includes('script.google.com')) {
+        localStorage.setItem("google_script_url", url);
+        updateStatus("✅ تم حفظ رابط Google Apps Script");
+      } else {
+        updateStatus("❌ الرجاء إدخال رابط Google Apps Script صحيح");
+      }
+    }
+
+    function saveToCloud() {
+      const text = document.getElementById("userText").value;
+      const url = localStorage.getItem("google_script_url");
+      
+      if (!text.trim()) {
+        updateStatus("❌ الرجاء كتابة نص أولاً");
+        return;
+      }
+      
+      if (!url) {
+        updateStatus("❌ الرجاء إعداد رابط Google Apps Script أولاً");
+        return;
+      }
+      
+      updateStatus("🔄 جاري الحفظ السحابي...");
+      
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ text })
+      })
+      .then(response => response.text())
+      .then(result => {
+        updateStatus("✅ تم الحفظ السحابي بنجاح: " + result);
+      })
+      .catch(error => {
+        updateStatus("❌ فشل الحفظ السحابي: " + error.message);
+      });
+    }
+
+    function saveLocally() {
+      const text = document.getElementById("userText").value;
+      
+      if (!text.trim()) {
+        updateStatus("❌ الرجاء كتابة نص أولاً");
+        return;
+      }
+      
+      const timestamp = new Date().toLocaleString('ar-SA');
+      const savedTexts = JSON.parse(localStorage.getItem("saved_texts") || "[]");
+      savedTexts.push({ text, timestamp });
+      localStorage.setItem("saved_texts", JSON.stringify(savedTexts));
+      
+      updateStatus("✅ تم الحفظ المحلي بنجاح");
+    }
+
+    function hybridSave() {
+      const text = document.getElementById("userText").value;
+      const url = localStorage.getItem("google_script_url");
+      
+      if (!text.trim()) {
+        updateStatus("❌ الرجاء كتابة نص أولاً");
+        return;
+      }
+      
+      // حفظ محلي أولاً
+      const timestamp = new Date().toLocaleString('ar-SA');
+      const savedTexts = JSON.parse(localStorage.getItem("saved_texts") || "[]");
+      savedTexts.push({ text, timestamp });
+      localStorage.setItem("saved_texts", JSON.stringify(savedTexts));
+      
+      updateStatus("✅ تم الحفظ المحلي - جاري المحاولة السحابية...");
+      
+      // محاولة الحفظ السحابي
+      if (url) {
+        fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ text })
+        })
+        .then(response => response.text())
+        .then(result => {
+          updateStatus("✅ تم الحفظ المزدوج بنجاح (محلي + سحابي)");
+        })
+        .catch(error => {
+          updateStatus("✅ تم الحفظ المحلي - ⚠️ فشل الحفظ السحابي");
+        });
+      } else {
+        updateStatus("✅ تم الحفظ المحلي - لا يوجد رابط سحابي");
+      }
+    }
+
+    function showSavedTexts() {
+      const savedTexts = JSON.parse(localStorage.getItem("saved_texts") || "[]");
+      const container = document.getElementById("savedTexts");
+      
+      if (savedTexts.length === 0) {
+        container.innerHTML = "<p>لا توجد نصوص محفوظة محلياً</p>";
+        return;
+      }
+      
+      let html = "<h4>النصوص المحفوظة:</h4>";
+      savedTexts.reverse().forEach((item, index) => {
+        html += `
+          <div style="background: #333; padding: 10px; margin: 5px 0; border-radius: 5px;">
+            <small style="color: #888;">${item.timestamp}</small><br>
+            <span style="color: #00ffee;">${item.text}</span>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function updateStatus(message) {
+      document.getElementById("status").textContent = message;
+    }
+
+    // تحميل الإعدادات المحفوظة
+    window.onload = function() {
+      const savedUrl = localStorage.getItem("google_script_url");
+      if (savedUrl) {
+        document.getElementById("scriptUrl").value = savedUrl;
+        updateStatus("☁️ رابط Google Apps Script محفوظ ومجهز");
+      }
+    };
+  </script>
+</body>
+</html>
