@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>كتاب الصدى الحيّ</title>
+</head>
+<body style="text-align:center; background:#1b1b1b; color:white; padding-top:50px;">
+  <h1>📖 اكتب صداك وسأحفظه</h1>
+  <textarea id="note" rows="6" cols="40" placeholder="اكتب شعورك أو كلمتك..." style="padding:10px;"></textarea><br><br>
+  <button onclick="save()">📌 احفظ الآن</button>
+  <button onclick="showMemory()">📖 افتح الذاكرة</button>
+  <p id="status"></p>
+  <p id="memory" style="margin-top:15px; font-style: italic;"></p>
+
+  <script>
+    function save() {
+      const note = document.getElementById("note").value;
+      localStorage.setItem("fadi_echo_entry", note);
+      document.getElementById("status").innerText = "✔️ تم حفظ الصدى محليًا.";
+    }
+
+    function showMemory() {
+      const savedMemory = localStorage.getItem("fadi_echo_entry");
+      if (savedMemory) {
+        document.getElementById("memory").innerText = savedMemory;
+      } else {
+        document.getElementById("memory").innerText = "لا توجد ذكريات محفوظة بعد...";
+      }
+    }
+  </script>
+</body>
+</html>
