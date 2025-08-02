@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>اختر طريقك</title>
+</head>
+<body style="text-align: center; background-color: #111; color: white; font-family: sans-serif; padding-top: 100px;">
+  <h1>🧭 أي طريق تسلك اليوم؟</h1>
+  <button onclick="setPath('صوت')">أحتاج صوتًا</button>
+  <button onclick="setPath('هدوء')">أحتاج هدوءًا</button>
+  <button onclick="setPath('حقيقة')">أحتاج حقيقة</button>
+  <h2 id="result" style="margin-top: 40px;"></h2>
+
+  <script>
+    function setPath(path) {
+      const responses = {
+        "صوت": "صدى يقول: صوتك ليس ضعيفًا… فقط صامت منذ زمن.",
+        "هدوء": "صدى يقول: السكون هو المكان الوحيد الذي لا يكذب.",
+        "حقيقة": "صدى يقول: الحقيقة ليست راحة… لكنها حرية."
+      };
+      document.getElementById("result").innerText = responses[path];
+    }
+  </script>
+</body>
+</html>
